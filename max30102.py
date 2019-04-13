@@ -4,7 +4,8 @@
 from __future__ import print_function
 from time import sleep
 
-import RPi.GPIO as GPIO
+from pyA20.gpio import gpio
+from pyA20.gpio import port
 import smbus
 
 # i2c address-es
@@ -48,7 +49,7 @@ MAX_BRIGHTNESS = 255
 class MAX30102():
     # by default, this assumes that physical pin 7 (GPIO 4) is used as interrupt
     # by default, this assumes that the device is at 0x57 on channel 1
-    def __init__(self, channel=1, address=0x57, gpio_pin=7):
+    def __init__(self, channel=1, address=0x57, gpio_pin=port.PG7):
         print("Channel: {0}, address: {1}".format(channel, address))
         self.address = address
         self.channel = channel
@@ -56,8 +57,9 @@ class MAX30102():
         self.interrupt = gpio_pin
 
         # set gpio mode
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(self.interrupt, GPIO.IN)
+        gpio.init()
+        #gpio.setcfg(gpio.INPUT)
+        gpio.setcfg(self.interrupt, gpio.INPUT)
 
         self.reset()
 
@@ -149,7 +151,7 @@ class MAX30102():
         red_buf = []
         ir_buf = []
         for i in range(amount):
-            while(GPIO.input(self.interrupt) == 1):
+            while(gpio.input(self.interrupt) == 1):
                 # wait for interrupt signal, which means the data is available
                 # do nothing here
                 pass
