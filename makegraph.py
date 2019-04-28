@@ -32,4 +32,5 @@ ax.set_ylim(142000, 146000)
 # show legend
 ax.legend(loc="best")
 
-plt.show()
+#plt.show()
+plt.savefig('plt.jpg')
